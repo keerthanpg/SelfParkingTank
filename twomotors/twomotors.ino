@@ -9,10 +9,10 @@ const int InA1 = 7;
 const int InB1 = 8;
 int encodPinA1=3;                       
 int encodPinB1=5; 
-double PWM1 = 6;
+double PWM1 = 11;
 
 const int InA2 = 10;
-const int InB2 = 11;
+const int InB2 = 12;
 int encodPinA2=2;                       
 int encodPinB2=4;
 double PWM2 = 9;
@@ -22,8 +22,8 @@ double tar_spd = 0.3;
 double Kp = 5;//you can set these constants however you like depending on trial & error
 double Ki = 0;
 double Kd = 5;                                              
-int vel1=-254;
-int vel2=-254; 
+int vel1=-255;
+int vel2=-255; 
 
 float last_error = 0;
 float error = 0;
@@ -56,10 +56,15 @@ void loop(){
 
   //Serial.print("here in loop");
   
-  vel1control(vel1); 
-  vel2control(vel2);
-  SPD1calculation();
-  SPD2calculation();    
+  for (vel1=-255; vel1<256; vel1++){
+    vel2control(vel2);
+    delay(500);
+    SPD1calculation();
+  }
+  //vel1control(vel1); 
+  //vel2control(vel2);
+  //SPD1calculation();
+  //SPD2calculation();    
   //Serial.flush();
   
 }
@@ -94,6 +99,7 @@ void change1() //these functions are for finding the encoder counts
   
   }
   
+  
 }
 
 void change2() //these functions are for finding the encoder counts
@@ -122,6 +128,7 @@ void change2() //these functions are for finding the encoder counts
     count2--;
   
   }
+  
 }
 
 void vel1control(int vel){
@@ -188,9 +195,13 @@ void SPD1calculation()
   prev_angle = (1 * count1);//count to angle conversion
   delay(1000);
   angle = (1 * count1);
-  curr_spd = (angle - prev_angle);
-  Serial.print(curr_spd);
-  Serial.print("?");
+  curr_spd = (angle - prev_angle)/1000;
+  //Serial.println(millis()); 
+  
+  Serial.print(vel2); 
+  Serial.print(',');
+  Serial.println(curr_spd, 6);
+  
 }
 
 void SPD2calculation()
@@ -198,8 +209,9 @@ void SPD2calculation()
   prev_angle = (1 * count2);//count to angle conversion
   delay(1000);
   angle = (1 * count2);
-  curr_spd = (angle - prev_angle);
-  Serial.print(curr_spd);
-  Serial.print("??");
+  curr_spd = (angle - prev_angle)/1000;
+  Serial.print(vel1); 
+  Serial.print(',');
+  Serial.println(curr_spd, 6);
 }
 
