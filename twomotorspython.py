@@ -22,10 +22,10 @@ def sendtoard():
         ard.flush()
         #print("Sending1")
 
-        val1 = int(210)
-        val2 = int(400)
+        val1 = int(500)
+        val2 = int(500)
         formatted_send=str(format(int(val1), '03d')+format(int(val2), '03d'));
-        print ("Python value sent: " + format(int(val1), '03d')+format(int(val2), '03d'))
+        #print ("Python value sent: " + format(int(val1), '03d')+format(int(val2), '03d'))
         
         #print(formatted_send)
         #print(type(formatted_send))
@@ -37,7 +37,7 @@ def sendtoard():
         #ard.write(','.encode('utf-8'))
         #ard.write(val2y)
         #ard.write('_'.encode('utf-8'))
-        time.sleep(0.25) # I shortened this to match the new value in your Arduino code
+        time.sleep(1.5) # I shortened this to match the new value in your Arduino code
 
         # Serial read section
         msg = ard.read(ard.inWaiting()) # read all characters in buffer
