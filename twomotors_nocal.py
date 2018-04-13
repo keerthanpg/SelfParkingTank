@@ -3,7 +3,6 @@ import syslog
 import time
 import serial
 import argparse
-import cv2
 import numpy as np
 
 

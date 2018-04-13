@@ -2,8 +2,7 @@ import serial
 import syslog
 import time
 import serial
-import argparse
-import cv2
+import argparsei
 import numpy as np
 
 
