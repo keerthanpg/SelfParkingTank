@@ -18,6 +18,8 @@ int encodPinB2=4;
 double PWM2 = 9;                                           
 int vel1=-255;
 int vel2=-255; 
+int lastvel1=0;
+int lastvel2=0;
 
 
 void setup() {
@@ -49,6 +51,7 @@ void loop(){
     flag=0;
     if (Serial.available() >0){
       char c = Serial.read();  //gets one byte from serial buffer
+      if(c==',') break;
       readString += c; //makes the string readString
     }
   } 
@@ -65,12 +68,12 @@ void loop(){
   vel2=Ycord.toInt(); 
   
   if (flag){
-    vel1=255;
-    vel2=255;
+    vel1=lastvel1;
+    vel2=lastvel2;
   }
   
-  vel1=vel1-255;
-  vel2=vel2-255;
+  vel1=vel1-355;
+  vel2=vel2-355;
   //Serial.print("Arduino received: ");
   //Serial.print(vel1);
   //Serial.print(vel2);
@@ -82,6 +85,8 @@ void loop(){
   SPD1calculation();
   SPD2calculation();    
   //Serial.flush();
+  lastvel1=vel1+355;
+  lastvel2=vel2+355;
   Serial.flush();
   
 }
@@ -202,9 +207,9 @@ void motor2Backward(int PWM_val)  {
 void SPD1calculation()
 {
   prev_angle = (1 * count1);//count to angle conversion
-  delay(1000);
+  delay(500);
   angle = (1 * count1);
-  curr_spd = (angle - prev_angle)/1000;
+  curr_spd = (angle - prev_angle)/500;
   //Serial.println(millis()); 
   
   Serial.print(vel2); 
@@ -218,9 +223,9 @@ void SPD1calculation()
 void SPD2calculation()
 {
   prev_angle = (1 * count2);//count to angle conversion
-  delay(1000);
+  delay(500);
   angle = (1 * count2);
-  curr_spd = (angle - prev_angle)/1000;
+  curr_spd = (angle - prev_angle)/500;
   Serial.print(vel1); 
   Serial.print(',');
   Serial.print('1');

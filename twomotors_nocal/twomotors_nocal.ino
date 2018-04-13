@@ -15,15 +15,12 @@ const int InA2 = 10;
 const int InB2 = 12;
 int encodPinA2=2;                       
 int encodPinB2=4;
-double PWM2 = 9;
-
-double setpoint = -100;//1 setting it to move through 100 degrees
-double tar_spd = 0.3;
-double Kp = 5;//you can set these constants however you like depending on trial & error
-double Ki = 0;
-double Kd = 5;                                              
+double PWM2 = 9;                                           
 int vel1=-255;
 int vel2=-255; 
+int lastvel1=255;
+int lastvel2=255;
+
 
 void setup() {
   Serial.begin(9600);
@@ -31,8 +28,8 @@ void setup() {
   pinMode(encodPinB1, INPUT);
   pinMode(encodPinA2, INPUT);//encoder pins
   pinMode(encodPinB2, INPUT);
-  attachInterrupt(digitalPinToInterrupt(2),change2,CHANGE);
-  attachInterrupt(digitalPinToInterrupt(3),change1,CHANGE);
+  //attachInterrupt(digitalPinToInterrupt(2),change2,CHANGE);
+  //attachInterrupt(digitalPinToInterrupt(3),change1,CHANGE);
   //attachInterrupt(0,change1,CHANGE);
   pinMode(PWM1, OUTPUT);
   pinMode(PWM2, OUTPUT);
@@ -50,7 +47,7 @@ void loop(){
   String readString;
   
   while (Serial.available()){
-    //delay(30);
+    delay(30);
     flag=0;
     if (Serial.available() >0){
       char c = Serial.read();  //gets one byte from serial buffer
@@ -70,8 +67,8 @@ void loop(){
   vel2=Ycord.toInt(); 
   
   if (flag){
-    vel1=255;
-    vel2=255;
+    vel1=lastvel1;
+    vel2=lastvel2;
   }
   
   vel1=vel1-255;
@@ -83,73 +80,12 @@ void loop(){
   
   
   vel2control(vel2); 
-  vel2control(vel2);
-  SPD1calculation();
-  SPD2calculation();    
+  vel1control(vel1);
+  lastvel1=vel1+255;
+  lastvel2=vel2+255;
+    
   //Serial.flush();
   Serial.flush();
-  
-}
-
-void change1() //these functions are for finding the encoder counts
-{
-  //Serial.print("here1");
-  c1 = digitalRead(encodPinA1);
-  c2 = digitalRead(encodPinB1);
- /*
-  if ((last1 == LOW) && (c1 == HIGH)) {
-    if (c2 == LOW) {
-      count1--;
-    } else {
-      count1++;
-    }
-   Serial.print (count1);
-   Serial.print ("/");
-  }
-  last1 = c1;
-
-  */ 
-  
-
-  if(c1==c2)
-  {
-    count1++;
-  }
-  else
-  {
-    count1--;
-  
-  }
-  
-  
-}
-
-void change2() //these functions are for finding the encoder counts
-{
-  //Serial.print("here2");
-  c1 = digitalRead(encodPinA2);
-  c2 = digitalRead(encodPinB2); 
- /*
-  if ((last2 == LOW) && (c1 == HIGH)) {
-    if (c2 == LOW) {
-      count2--;
-    } else {
-      count2++;
-    }
-    Serial.print (count2);
-    Serial.print ("//");
-  }
-  last2 = c1;
-*/
-  if(c1==c2)
-  {
-    count2++;
-  }
-  else
-  {
-    count2--;
-  
-  }
   
 }
 
@@ -212,28 +148,4 @@ void motor2Backward(int PWM_val)  {
  digitalWrite(InB2, LOW);
 }
 
-void SPD1calculation()
-{
-  prev_angle = (1 * count1);//count to angle conversion
-  delay(1000);
-  angle = (1 * count1);
-  curr_spd = (angle - prev_angle)/1000;
-  //Serial.println(millis()); 
-  
-  Serial.print(vel2); 
-  Serial.print(',');
-  Serial.println(curr_spd, 6);
-  
-}
-
-void SPD2calculation()
-{
-  prev_angle = (1 * count2);//count to angle conversion
-  delay(1000);
-  angle = (1 * count2);
-  curr_spd = (angle - prev_angle)/1000;
-  Serial.print(vel1); 
-  Serial.print(',');
-  Serial.println(curr_spd, 6);
-}
 
