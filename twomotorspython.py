@@ -18,7 +18,7 @@ def sendtoard():
     # Serial write section
         #name = input("What's your name? ")
         time.sleep(2)
-        for j in range(612, 100, -1):
+        for j in range(100, 612, 1):
             ard.flush()            
             val1 = int(j)
             val2 = int(j)
