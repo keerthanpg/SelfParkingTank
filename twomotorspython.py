@@ -12,13 +12,13 @@ import argparse
 port = '/dev/ttyACM0' # note I'm using Mac OS-X
 ard = serial.Serial(port,9600,timeout=5)
 time.sleep(2) # wait for Arduino
-f=open('calibration', 'w')
+f=open('calibration', 'a')
 def sendtoard():
     for i in range(2):
     # Serial write section
         #name = input("What's your name? ")
         time.sleep(2)
-        for j in range(100, 612):
+        for j in range(612, 100, -1):
             ard.flush()            
             val1 = int(j)
             val2 = int(j)
@@ -31,7 +31,10 @@ def sendtoard():
             if not msg.isspace():
                 print(j)
                 print (msg)
+                f=open('calibration', 'a')
+                f.write('\n')
                 f.write(msg)
+                f.close()
             time.sleep(0.2)
 
         
