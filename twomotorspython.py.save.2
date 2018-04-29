@@ -4,8 +4,11 @@ import time
 import serial
 import argparse
 #import numpy as np
+from threading import  Event
 
-import signal 
+event = Event()
+
+
 
 #The following line is for serial over GPIO
 port = '/dev/ttyACM0' # note I'm using Mac OS-X
@@ -14,18 +17,10 @@ time.sleep(2) # wait for Arduino
 f=open('calibration', 'a')
 cond = 0	# Default value is 0
 
-
-#class GracefulKiller:
-#  kill_now = False
-#  def __init__(self):
-#    signal.signal(signal.SIGINT, self.exit_gracefully)
-#    signal.signal(signal.SIGTERM, self.exit_gracefully)#
-
-#  def exit_gracefully(self,signum, frame):
-#    self.kill_now = True
-
 def sendtoard():
-    for i in range(2):
+  
+  while not exit.is_set():
+     for i in range(2):
         time.sleep(2)
         
 	# Every single digit to each motor should be 3 digits long
@@ -47,25 +42,19 @@ def sendtoard():
                 print (msg)
                 f.write('\n')
                 f.write(msg)
-		print (msg)
             time.sleep(0.2)
 
-        #    if killer.kill_now:
-	#	cond = 1
-		#print ('Yo mama')
-      	#	break
-	#if (cond == 1):
-	#	break
-    	#    if (0xFF == ord('q')):
-       	#    	cond = 1	# Condition 1 means break all for loops ...
-	#    	break
-	#if (cond == 1):
-	#	break
-
-
+        
+    	    if (0xFF == ord('q')):
+       	    	cond = 1	# Condition 1 means break all for loops ...
+	    	break
+	if (cond == 1):
+		break
+     exit.wait(60)
 if __name__ == "__main__":
-	killer = GracefulKiller()
-	
+	import signal
+	for sig in ('TERM', 'HUP', 'INT'):
+        	signal.signal(getattr(signal, 'SIG'+sig), quit);
 	sendtoard()
 	f.close()
 

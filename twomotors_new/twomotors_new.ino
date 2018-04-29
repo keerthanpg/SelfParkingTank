@@ -49,20 +49,16 @@ void loop(){
   while (Serial.available()){
     delay(30);
     flag=0;
-    if (Serial.available() >0){
+    if (Serial.available()>0){
       char c = Serial.read();  //gets one byte from serial buffer
       if(c==',') break;
       readString += c; //makes the string readString
     }
-  } 
-  
-  
-  for(int i=0;i<3;i++){
-    Xcord+=readString[i];
-  }
-  for(int i=3;i<6;i++){
-    Ycord+=readString[i];
   }   
+  for(int i=0;i<3;i++){
+    Xcord+=readString[i];}
+  for(int i=3;i<6;i++){
+    Ycord+=readString[i];}   
   
   vel1=Xcord.toInt();
   vel2=Ycord.toInt(); 
@@ -74,27 +70,26 @@ void loop(){
   
   vel1=vel1-355;
   vel2=vel2-355;
-  //Serial.print("Arduino received: ");
-  //Serial.print(vel1);
-  //Serial.print(vel2);
   Serial.print("\0");
   
-  
+  // Control the motors
   vel2control(vel2); 
   vel1control(vel1);
+  
+  // Launch the encoder wheel velocity estimation 
   SPD1calculation();
   SPD2calculation();    
-  //Serial.flush();
+
+  Serial.flush()
+  // Update the last encoder velocity as reference for the next measurement
   lastvel1=vel1+355;
   lastvel2=vel2+355;
-  Serial.flush();
-  
-}
-/*
-void loop(){  
 
-  //Serial.print("here in loop");
-  
+  Serial.flush();  
+}
+
+/*
+void loop(){   
   for (vel1=-255; vel1<256; vel1++){
     vel2control(vel2);
     vel1control(vel2);
@@ -109,80 +104,37 @@ void loop(){
   
 }*/
 
-void change1() //these functions are for finding the encoder counts
-{
-  //Serial.print("here1");
+//these functions (change1 and change2) are for finding the encoder counts
+void change1(){
   c1 = digitalRead(encodPinA1);
   c2 = digitalRead(encodPinB1); 
-
-  if(c1==c2)
-  {
-    count1++;
-  }
-  else
-  {
-    count1--;
-  
-  }
-  
-  
+  if(c1==c2){count1++;}
+  else{count1--;}
 }
 
-void change2() //these functions are for finding the encoder counts
-{
-  //Serial.print("here2");
+void change2(){
   c1 = digitalRead(encodPinA2);
   c2 = digitalRead(encodPinB2); 
-   if(c1==c2)
-  {
-    count2++;
-  }
-  else
-  {
-    count2--;
-  
-  }
-  
+  if(c1==c2) {count2++;}
+  else{count2--;}
 }
 
-void vel1control(int vel){
-  
-  if (vel>-256 && vel<256)
- {
-    if (vel>0)
-    {
-      motor1Forward(vel);
-    }
-    else
-    {
-      motor1Backward(-1*vel);
-      //Serial.println("printvel");
-    }
-  }
+void vel1control(int vel){  
+  if (vel>-256 && vel<256) {
+    if (vel>0){motor1Forward(vel); }
+    else{motor1Backward(-1*vel);}}
 }
 
 void vel2control(int vel){
-  
-  if (vel>-256 && vel<256)
- {
-    if (vel>0)
-    {
-      motor2Forward(vel);
-    }
-    else
-    {
-      motor2Backward(-1*vel);
-      //Serial.println("printvel");
-    }
-  }
+  if (vel>-256 && vel<256){
+    if (vel>0){motor2Forward(vel);}
+    else{motor2Backward(-1*vel);}}
 }
-
 
 void motor1Forward(int PWM_val)  {
  analogWrite(PWM1, PWM_val);
  digitalWrite(InA1, LOW);
- digitalWrite(InB1, HIGH);
- 
+ digitalWrite(InB1, HIGH); 
 }
 
 void motor1Backward(int PWM_val)  {
@@ -195,7 +147,6 @@ void motor2Forward(int PWM_val)  {
  analogWrite(PWM2, PWM_val);
  digitalWrite(InA2, LOW);
  digitalWrite(InB2, HIGH);
- 
 }
 
 void motor2Backward(int PWM_val)  {
@@ -204,20 +155,16 @@ void motor2Backward(int PWM_val)  {
  digitalWrite(InB2, LOW);
 }
 
-void SPD1calculation()
-{
+void SPD1calculation(){
   prev_angle = (1 * count1);//count to angle conversion
   delay(500);
   angle = (1 * count1);
   curr_spd = (angle - prev_angle)/500;
-  //Serial.println(millis()); 
-  
   Serial.print(vel2); 
   Serial.print(',');
   Serial.print('2');
   Serial.print(',');
   Serial.println(curr_spd, 6);
-  
 }
 
 void SPD2calculation()

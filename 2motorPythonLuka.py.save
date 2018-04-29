@@ -4,7 +4,7 @@ import time
 import serial
 import argparse
 #import numpy as np
-
+import sys,tty,termios
 import signal 
 
 #The following line is for serial over GPIO
@@ -14,15 +14,6 @@ time.sleep(2) # wait for Arduino
 f=open('calibration', 'a')
 cond = 0	# Default value is 0
 
-
-#class GracefulKiller:
-#  kill_now = False
-#  def __init__(self):
-#    signal.signal(signal.SIGINT, self.exit_gracefully)
-#    signal.signal(signal.SIGTERM, self.exit_gracefully)#
-
-#  def exit_gracefully(self,signum, frame):
-#    self.kill_now = True
 
 def sendtoard():
     for i in range(2):
@@ -47,25 +38,47 @@ def sendtoard():
                 print (msg)
                 f.write('\n')
                 f.write(msg)
-		print (msg)
             time.sleep(0.2)
 
-        #    if killer.kill_now:
-	#	cond = 1
-		#print ('Yo mama')
-      	#	break
-	#if (cond == 1):
-	#	break
-    	#    if (0xFF == ord('q')):
-       	#    	cond = 1	# Condition 1 means break all for loops ...
-	#    	break
-	#if (cond == 1):
-	#	break
+class _Getch:
+    def __call__(self):
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            try:
+                tty.setraw(sys.stdin.fileno())
+                ch = sys.stdin.read(3)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            return ch
+def get():
+        inkey = _Getch()
+        while(1):
+                k=inkey()
+                if k!='':break
+        if k=='\x1b[A':
+                print "up"
+        elif k=='\x1b[B':
+                print "down"
+        elif k=='\x1b[C':
+                print "right"
+        elif k=='\x1b[D':
+                print "left"
+        else:
+                print "not an arrow key!"
+
+def main():
+        for i in range(0,20):
+                get()
 
 
-if __name__ == "__main__":
-	killer = GracefulKiller()
+def override():
 	
-	sendtoard()
+if __name__ == "__main__":
+	
+	try:
+		sendtoard()
+	except KeyboardInterrupt:
+		print ('Interrupted')
+		main()
 	f.close()
 
