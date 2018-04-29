@@ -31,7 +31,7 @@ def sendtoard():
 	# Every single digit to each motor should be 3 digits long
 	# therefore  Keerthana has initialised the 0 as 100, which
 	# explains why -355 in arduino code
-	for j in range(100, 712, 1):
+        for j in range(479, 712, 1):
             ard.flush()            
             val1 = str( format(int(j), '03d') )
             val2 = str( format(int(j), '03d') )
@@ -64,7 +64,7 @@ def sendtoard():
 
 
 if __name__ == "__main__":
-	killer = GracefulKiller()
+	
 	
 	sendtoard()
 	f.close()
